@@ -42,9 +42,20 @@ docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt
 ```
 
 ```
+# SSH to client node
+cd ~/non-profit-blockchain/ngo-fabric
+source fabric-exports.sh
+
+cd ~/non-profit-blockchain/ngo-rest-api/connection-profile
+./gen-connection-profile.sh
+cd ~/non-profit-blockchain/tmp/connection-profile/
+cat ngo-connection-profile.yaml
+
 cd ~/non-profit-blockchain/ngo-rest-api
 nvm use lts/carbon
 node app.js 
+
+curl -s -X POST http://localhost:3000/users -H "content-type: application/x-www-form-urlencoded" -d 'username=michael&orgName=Org1'
 
 curl -s -X POST "http://localhost:3000/patents" -H "content-type: application/json" -d '{
     "applicationNumber":"US20110075897",
@@ -52,4 +63,13 @@ curl -s -X POST "http://localhost:3000/patents" -H "content-type: application/js
     "applicant":"Genera Electric Co",
     "inventors":"Shai Dekel, Leon Google"
 }'
+
+curl -s -X POST "http://localhost:3000/patents" -H "content-type: application/json" -d '{
+    "applicationNumber":"US20160303254",
+    "title":"Methylene carbamate linkers for use with targeted-drug conjugates",
+    "applicant":"Seattle Genetics Inc",
+    "inventors":"Robert KOLAKOWSKI, Scott Jeffrey, Patrick Burke"
+}'
+
+curl -s -X GET   "http://localhost:3000/patents" -H "content-type: application/json"
 ```
