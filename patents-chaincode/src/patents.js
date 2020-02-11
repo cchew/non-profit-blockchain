@@ -127,20 +127,35 @@ let Chaincode = class {
    */
   async Init(stub) {
     console.log(
-      "=========== Init: Instantiated / Upgraded ngo chaincode ==========="
+      "=========== Init: Instantiated / Upgraded patents chaincode ==========="
     );
     return shim.success();
   }
 
   /**
-   * The Invoke method will call the methods below based on the method name passed by the calling program.
-   *
-   * @param {*} stub
+   * The Invoke method will call the methods below based on the method name passed by the calling
+   * program.
+   * 
+   * @param {*} stub 
    */
   async Invoke(stub) {
-    console.log("============= START : Invoke ===========");
-    // TODO
-    return shim.success();
+    console.log('============= START : Invoke ===========');
+    let ret = stub.getFunctionAndParameters();
+    console.log('##### Invoke args: ' + JSON.stringify(ret));
+
+    let method = this[ret.fcn];
+    if (!method) {
+      console.error('##### Invoke - error: no chaincode function with name: ' + ret.fcn + ' found');
+      throw new Error('No chaincode function with name: ' + ret.fcn + ' found');
+    }
+    try {
+      let response = await method(stub, ret.params);
+      console.log('##### Invoke response payload: ' + response);
+      return shim.success(response);
+    } catch (err) {
+      console.log('##### Invoke - error: ' + err);
+      return shim.error(err);
+    }
   }
 
   /**
@@ -152,6 +167,77 @@ let Chaincode = class {
   async initLedger(stub, args) {
     console.log("============= START : Initialize Ledger ===========");
     console.log("============= END : Initialize Ledger ===========");
+  }
+
+  /************************************************************************************************
+   * 
+   * Patent functions 
+   * 
+   ************************************************************************************************/
+
+  /**
+   * Creates a new patent
+   * 
+   * @param {*} stub 
+   * @param {*} args - JSON as follows:
+   * {
+   *    "applicationNumber":"US20160303254",
+   *    "title":"Methylene carbamate linkers for use with targeted-drug conjugates",
+   *    "applicant":"Seattle Genetics Inc",
+   *    "inventor":"Robert KOLAKOWSKI, Scott Jeffrey, Patrick Burke"
+   * }
+   */
+  async createPatent(stub, args) {
+    console.log('============= START : createPatent ===========');
+    console.log('##### createPatent arguments: ' + JSON.stringify(args));
+
+    // args is passed as a JSON string
+    let json = JSON.parse(args);
+    let key = 'patent' + json['applicationNumber'];
+    json['docType'] = 'patent';
+
+    console.log('##### createPatent payload: ' + JSON.stringify(json));
+
+    // Check if the patent already exists
+    let patentQuery = await stub.getState(key);
+    if (patentQuery.toString()) {
+      throw new Error('##### createPatent - This patent already exists: ' + json['applicationNumber']);
+    }
+
+    await stub.putState(key, Buffer.from(JSON.stringify(json)));
+    console.log('============= END : createPatent ===========');
+  }
+
+  /**
+   * Retrieves a specific donor
+   * 
+   * @param {*} stub 
+   * @param {*} args 
+   */
+  async queryPatent(stub, args) {
+    console.log('============= START : queryPatent ===========');
+    console.log('##### queryPatent arguments: ' + JSON.stringify(args));
+
+    // args is passed as a JSON string
+    let json = JSON.parse(args);
+    let key = 'donor' + json['applicationNumber'];
+    console.log('##### queryPatent key: ' + key);
+
+    return queryByKey(stub, key);
+  }
+
+  /**
+   * Retrieves all patents
+   * 
+   * @param {*} stub 
+   * @param {*} args 
+   */
+  async queryAllPatents(stub, args) {
+    console.log('============= START : queryAllPatents ===========');
+    console.log('##### queryAllPatents arguments: ' + JSON.stringify(args));
+ 
+    let queryString = '{"selector": {"docType": "donor"}}';
+    return queryByString(stub, queryString);
   }
 
   /************************************************************************************************
