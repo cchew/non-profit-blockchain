@@ -209,7 +209,7 @@ let Chaincode = class {
   }
 
   /**
-   * Retrieves a specific donor
+   * Retrieves a specific patent
    * 
    * @param {*} stub 
    * @param {*} args 
@@ -220,7 +220,7 @@ let Chaincode = class {
 
     // args is passed as a JSON string
     let json = JSON.parse(args);
-    let key = 'donor' + json['applicationNumber'];
+    let key = 'patent' + json['applicationNumber'];
     console.log('##### queryPatent key: ' + key);
 
     return queryByKey(stub, key);
@@ -236,7 +236,7 @@ let Chaincode = class {
     console.log('============= START : queryAllPatents ===========');
     console.log('##### queryAllPatents arguments: ' + JSON.stringify(args));
  
-    let queryString = '{"selector": {"docType": "donor"}}';
+    let queryString = '{"selector": {"docType": "patent"}}';
     return queryByString(stub, queryString);
   }
 
