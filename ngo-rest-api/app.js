@@ -140,6 +140,65 @@ app.post('/users', awaitHandler(async (req, res) => {
 }));
 
 /************************************************************************************
+ * Patent methods
+ ************************************************************************************/
+
+// GET Patent
+app.get('/patents', awaitHandler(async (req, res) => {
+	logger.info('================ GET on Patent');
+	let args = {};
+	let fcn = "queryAllPatents";
+
+    logger.info('##### GET on Patent - username : ' + username);
+	logger.info('##### GET on Patent - userOrg : ' + orgName);
+	logger.info('##### GET on Patent - channelName : ' + channelName);
+	logger.info('##### GET on Patent - chaincodeName : ' + chaincodeName);
+	logger.info('##### GET on Patent - fcn : ' + fcn);
+	logger.info('##### GET on Patent - args : ' + JSON.stringify(args));
+	logger.info('##### GET on Patent - peers : ' + peers);
+
+    let message = await query.queryChaincode(peers, channelName, chaincodeName, args, fcn, username, orgName);
+ 	res.send(message);
+}));
+
+// GET a specific Patent
+app.get('/patents/:applicationNumber', awaitHandler(async (req, res) => {
+	logger.info('================ GET on Patent by Application Number');
+	logger.info('Patent application number : ' + req.params);
+	let args = req.params;
+	let fcn = "queryPatent";
+
+    logger.info('##### GET on Patent by username - username : ' + username);
+	logger.info('##### GET on Patent by username - userOrg : ' + orgName);
+	logger.info('##### GET on Patent by username - channelName : ' + channelName);
+	logger.info('##### GET on Patent by username - chaincodeName : ' + chaincodeName);
+	logger.info('##### GET on Patent by username - fcn : ' + fcn);
+	logger.info('##### GET on Patent by username - args : ' + JSON.stringify(args));
+	logger.info('##### GET on Patent by username - peers : ' + peers);
+
+    let message = await query.queryChaincode(peers, channelName, chaincodeName, args, fcn, username, orgName);
+ 	res.send(message);
+}));
+
+// POST Patent
+app.post('/patents', awaitHandler(async (req, res) => {
+	logger.info('================ POST on Patent');
+	var args = req.body;
+	var fcn = "createPatent";
+
+    logger.info('##### POST on Patent - username : ' + username);
+	logger.info('##### POST on Patent - userOrg : ' + orgName);
+	logger.info('##### POST on Patent - channelName : ' + channelName);
+	logger.info('##### POST on Patent - chaincodeName : ' + chaincodeName);
+	logger.info('##### POST on Patent - fcn : ' + fcn);
+	logger.info('##### POST on Patent - args : ' + JSON.stringify(args));
+	logger.info('##### POST on Patent - peers : ' + peers);
+
+	let message = await invoke.invokeChaincode(peers, channelName, chaincodeName, args, fcn, username, orgName);
+	res.send(message);
+}));
+
+/************************************************************************************
  * Donor methods
  ************************************************************************************/
 
