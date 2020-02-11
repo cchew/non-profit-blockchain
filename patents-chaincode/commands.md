@@ -3,6 +3,7 @@ cd ~/non-profit-blockchain/ngo-fabric
 source fabric-exports.sh
 source ~/peer-exports.sh 
 
+cd ~/non-profit-blockchain
 git pull origin master
 cd ~
 mkdir -p ./fabric-samples/chaincode/patents
@@ -38,4 +39,17 @@ docker exec -e "CORE_PEER_TLS_ENABLED=true" -e "CORE_PEER_TLS_ROOTCERT_FILE=/opt
     -e "CORE_PEER_ADDRESS=$PEER" -e "CORE_PEER_LOCALMSPID=$MSP" -e "CORE_PEER_MSPCONFIGPATH=$MSP_PATH" \
     cli peer chaincode invoke -C mychannel -n patents \
     -c  '{"Args":["createPatent","{\"applicationNumber\": \"US20160303254\", \"title\": \"Methylene carbamate linkers for use with targeted-drug conjugates\", \"applicant\": \"Seattle Genetics Inc\", \"inventors\": \"Robert KOLAKOWSKI, Scott Jeffrey, Patrick Burke\"}"]}' -o $ORDERER --cafile /opt/home/managedblockchain-tls-chain.pem --tls
+```
+
+```
+cd ~/non-profit-blockchain/ngo-rest-api
+nvm use lts/carbon
+node app.js 
+
+curl -s -X POST "http://localhost:3000/patents" -H "content-type: application/json" -d '{
+    "applicationNumber":"US20110075897",
+    "title":"Stain-based optimized compression of digital pathology slides",
+    "applicant":"Genera Electric Co",
+    "inventors":"Shai Dekel, Leon Google"
+}'
 ```
