@@ -184,7 +184,7 @@ let Chaincode = class {
    *    "applicationNumber":"US20160303254",
    *    "title":"Methylene carbamate linkers for use with targeted-drug conjugates",
    *    "applicant":"Seattle Genetics Inc",
-   *    "inventor":"Robert KOLAKOWSKI, Scott Jeffrey, Patrick Burke"
+   *    "inventors":"Robert KOLAKOWSKI, Scott Jeffrey, Patrick Burke"
    * }
    */
   async createPatent(stub, args) {
